@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1516287859669.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "E2288761",
+    "lastKnownWriteTime" : 1516288680,
+    "last_content_update" : 1516288680,
+    "path" : "~/Programs/git-repos/microbiomeViz/man/parseMetaphlanTSV.Rd",
+    "project_path" : "man/parseMetaphlanTSV.Rd",
+    "properties" : {
+        "cursorPosition" : "0,0",
+        "scrollLine" : "0"
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_doc"
+}

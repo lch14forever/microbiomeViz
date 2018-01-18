@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1516285212910.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "3BAE3BDC",
+    "lastKnownWriteTime" : 1516288880,
+    "last_content_update" : 1516288880225,
+    "path" : "~/Programs/git-repos/microbiomeViz/R/parser.R",
+    "project_path" : "R/parser.R",
+    "properties" : {
+        "cursorPosition" : "21,15",
+        "scrollLine" : "14"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
