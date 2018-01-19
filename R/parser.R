@@ -1,8 +1,3 @@
-# Hello, world!
-#
-# This is an example function named 'hello'
-# which prints 'Hello, world!'.
-#
 # You can learn more about package authoring with RStudio at:
 #
 #   http://r-pkgs.had.co.nz/
@@ -18,13 +13,13 @@
 ##' @param file a single metaphlan table
 ##' @param delimiter delimiter to separate taxonomic anotations
 ##' @param index the column number of taxonomic annotation
-##' @return an extended phylo object
-##' @import ape
+##' @return a phylo4d object
+##' @importClassesFrom  phylobase phylo4d
 ##' @importFrom magrittr "%>%"
 ##' @import dplyr
 ##' @author Chenhao Li
 ##' @export
-##' @description parse a metaphlan table to a tree object
+##' @description parse a MetaPhlan table to a tree object
 parseMetaphlanTSV <- function(file, index=1, delimiter='\\|'){
     taxtab <- read.table(file, sep='\t', stringsAsFactors=FALSE) %>%
         slice(-grep('unclassified', .[,index]))
@@ -46,14 +41,12 @@ parseMetaphlanTSV <- function(file, index=1, delimiter='\\|'){
     b <- 1
     nodeSize <- a*log(mapping$taxaAbun[order(mapping$id)]) + b
     nodeClass <- factor(tax_class[order(mapping$id)], levels = rev(tax_chars))
-    tr <- list(edge = edges,
-               node.label=rownames(mapping)[!mapping$isTip],
-               tip.label=rownames(mapping[mapping$isTip,]),
-               Nnode = sum(!mapping$isTip),
-               nodeTax=nodeClass,
-               nodeSize=nodeSize,
-               edge.length=rep(1, nrow(edges))
+
+    tr <- phylo4d(x = edges,
+                  edge.length = rep(1, nrow(edges)),
+                  node.label = rownames(mapping)[!mapping$isTip],
+                  tip.label = rownames(mapping[mapping$isTip,]),
+                  all.data = data.frame(nodeSize, nodeClass)
     )
-    class(tr) <- "phylo"
     return(tr)
 }

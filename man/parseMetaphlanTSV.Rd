@@ -14,7 +14,7 @@ parseMetaphlanTSV(file, index = 1, delimiter = "\\\\|")
 \item{delimiter}{delimiter to separate taxonomic anotations}
 }
 \value{
-an extended phylo object
+a phylo4d object
 }
 \description{
 parse a metaphlan table to a tree object
