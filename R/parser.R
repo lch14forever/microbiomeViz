@@ -57,6 +57,7 @@ parseMetaphlanTSV <- function(tax.profile, index=1, delimiter='\\|', node.size.s
     phylo <- structure(list(edge = edges,
                             node.label = node.label,
                             tip.label = rownames(mapping[mapping$isTip,]),
+                            edge.length=rep(1, nrow(edges)),
                             Nnode = length(node.label)
                             ),
                        class = "phylo")
