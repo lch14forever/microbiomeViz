@@ -40,15 +40,19 @@ parseMetaphlanTSV <- function(file, index=1, delimiter='\\|'){
 
     a <- 1
     b <- 1
-    nodeSize <- a*log(mapping$taxaAbun[order(mapping$id)]) + b
-    nodeClass <- factor(tax_class[order(mapping$id)], levels = rev(tax_chars))
+    mapping$nodeSize <- a*log(mapping$taxaAbun) + b
+    mapping$nodeClass <- factor(tax_class, levels = rev(tax_chars))
 
+    mapping <- mapping[order(mapping$id),]
+
+    node.label <- rownames(mapping)[!mapping$isTip]
     phylo <- structure(list(edge = edges,
-                            node.label = rownames(mapping)[!mapping$isTip],
+                            node.label = node.label,
                             tip.label = rownames(mapping[mapping$isTip,]),
                             Nnode = length(node.label)
                             ),
                        class = "phylo")
 
-    treedata(phylo = phylo, data = data_frame(nodeSize, nodeClass))
+    d <- rename_(mapping, node = ~id) %>% select_(~-isTip)
+    treedata(phylo = phylo, data = as_data_frame(d))
 }
