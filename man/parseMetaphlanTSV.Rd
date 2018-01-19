@@ -4,11 +4,11 @@
 \alias{parseMetaphlanTSV}
 \title{parseMetaphlanTSV}
 \usage{
-parseMetaphlanTSV(file, index = 1, delimiter = "\\\\|",
+parseMetaphlanTSV(tax.profile, index = 1, delimiter = "\\\\|",
   node.size.scale = 1, node.size.offset = 1)
 }
 \arguments{
-\item{file}{a single metaphlan table}
+\item{tax.profile}{a single metaphlan table (either a file path or a a data.frame)}
 
 \item{index}{the column number of taxonomic annotation}
 
