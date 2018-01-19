@@ -4,7 +4,8 @@
 \alias{parseMetaphlanTSV}
 \title{parseMetaphlanTSV}
 \usage{
-parseMetaphlanTSV(file, index = 1, delimiter = "\\\\|")
+parseMetaphlanTSV(file, index = 1, delimiter = "\\\\|",
+  node.size.scale = 1, node.size.offset = 1)
 }
 \arguments{
 \item{file}{a single metaphlan table}
@@ -12,13 +13,17 @@ parseMetaphlanTSV(file, index = 1, delimiter = "\\\\|")
 \item{index}{the column number of taxonomic annotation}
 
 \item{delimiter}{delimiter to separate taxonomic anotations}
+
+\item{node.size.scale}{the parameter 'a' controlling node size: nodeSize=a*log(relative_abundance)+b}
+
+\item{node.size.offset}{the parameter 'b' controlling node size: nodeSize=a*log(relative_abundance)+b}
 }
 \value{
-a phylo4d object
+a treeio::treedata object
 }
 \description{
 parse a MetaPhlan table to a tree object
 }
 \author{
-Chenhao Li
+Chenhao Li, Guangchuang Yu
 }

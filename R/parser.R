@@ -13,37 +13,39 @@
 ##' @param file a single metaphlan table
 ##' @param delimiter delimiter to separate taxonomic anotations
 ##' @param index the column number of taxonomic annotation
-##' @return a phylo4d object
-##' @importClassesFrom  phylobase phylo4d
+##' @param node.size.scale the parameter 'a' controlling node size: nodeSize=a*log(relative_abundance)+b
+##' @param node.size.offset the parameter 'b' controlling node size: nodeSize=a*log(relative_abundance)+b
+##' @return a treeio::treedata object
 ##' @importFrom treeio treedata
 ##' @importFrom magrittr "%>%"
+##' @import ape
 ##' @import dplyr
-##' @author Chenhao Li
+##' @author Chenhao Li, Guangchuang Yu
 ##' @export
 ##' @description parse a MetaPhlan table to a tree object
-parseMetaphlanTSV <- function(file, index=1, delimiter='\\|'){
+parseMetaphlanTSV <- function(file, index=1, delimiter='\\|', node.size.scale=1, node.size.offset=1){
     taxtab <- read.table(file, sep='\t', stringsAsFactors=FALSE) %>%
         slice(-grep('unclassified', .[,index]))
     tax_chars <- c('k', 'p', 'c', 'o', 'f', 'g', 's', 't')
     tax_split <- strsplit(taxtab$V1, delimiter)    ## split into different taxonomy levels
-    child <- sapply(tax_split, tail, n=1)
+    child <- vapply(tax_split, tail, n=1, '')
     tax_class <- do.call(rbind, strsplit(child, '__'))[,1]
-    parent <- sapply(tax_split, function(x) ifelse(length(x)>1, x[length(x)-1], 'root'))
+    parent <- vapply(tax_split, function(x) ifelse(length(x)>1, x[length(x)-1], 'root'), '')
     isTip <- !child %in% parent
     index <- c()
     index[isTip] <- 1:sum(isTip)
     index[!isTip] <- (sum(isTip)+1):length(isTip)
     ## tips comes first
-    mapping <- data.frame(id=index, row.names=child, isTip, taxaAbun=taxtab$V2)
-    edges <- cbind(mapping[parent,]$id, mapping$id)
+    mapping <- data.frame(node=index, row.names=child, isTip, taxaAbun=taxtab$V2)
+    edges <- cbind(mapping[parent,]$node, mapping$node)
     edges <- edges[!is.na(edges[,1]),]
 
-    a <- 1
-    b <- 1
+    a <- node.size.scale
+    b <- node.size.offset
     mapping$nodeSize <- a*log(mapping$taxaAbun) + b
     mapping$nodeClass <- factor(tax_class, levels = rev(tax_chars))
 
-    mapping <- mapping[order(mapping$id),]
+    mapping <- mapping[order(mapping$node),]
 
     node.label <- rownames(mapping)[!mapping$isTip]
     phylo <- structure(list(edge = edges,
@@ -53,6 +55,6 @@ parseMetaphlanTSV <- function(file, index=1, delimiter='\\|'){
                             ),
                        class = "phylo")
 
-    d <- rename_(mapping, node = ~id) %>% select_(~-isTip)
+    d <- mapping %>% select_(~-isTip)
     treedata(phylo = phylo, data = as_data_frame(d))
 }
