@@ -17,7 +17,7 @@ parseMetaphlanTSV(file, index = 1, delimiter = "\\\\|")
 a phylo4d object
 }
 \description{
-parse a metaphlan table to a tree object
+parse a MetaPhlan table to a tree object
 }
 \author{
 Chenhao Li

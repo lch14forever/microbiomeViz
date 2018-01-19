@@ -15,6 +15,7 @@
 ##' @param index the column number of taxonomic annotation
 ##' @return a phylo4d object
 ##' @importClassesFrom  phylobase phylo4d
+##' @importFrom phylobase phylo4d
 ##' @importFrom magrittr "%>%"
 ##' @import dplyr
 ##' @author Chenhao Li
