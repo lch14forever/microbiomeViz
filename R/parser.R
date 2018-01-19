@@ -15,7 +15,7 @@
 ##' @param index the column number of taxonomic annotation
 ##' @return a phylo4d object
 ##' @importClassesFrom  phylobase phylo4d
-##' @importFrom phylobase phylo4d
+##' @importFrom treeio treedata
 ##' @importFrom magrittr "%>%"
 ##' @import dplyr
 ##' @author Chenhao Li
@@ -43,11 +43,12 @@ parseMetaphlanTSV <- function(file, index=1, delimiter='\\|'){
     nodeSize <- a*log(mapping$taxaAbun[order(mapping$id)]) + b
     nodeClass <- factor(tax_class[order(mapping$id)], levels = rev(tax_chars))
 
-    tr <- phylo4d(x = edges,
-                  edge.length = rep(1, nrow(edges)),
-                  node.label = rownames(mapping)[!mapping$isTip],
-                  tip.label = rownames(mapping[mapping$isTip,]),
-                  all.data = data.frame(nodeSize, nodeClass)
-    )
-    return(tr)
+    phylo <- structure(list(edge = edges,
+                            node.label = rownames(mapping)[!mapping$isTip],
+                            tip.label = rownames(mapping[mapping$isTip,]),
+                            Nnode = length(node.label)
+                            ),
+                       class = "phylo")
+
+    treedata(phylo = phylo, data = data_frame(nodeSize, nodeClass))
 }
