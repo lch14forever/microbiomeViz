@@ -2,6 +2,7 @@
 
 export(clade.anno)
 export(parseMetaphlanTSV)
+export(tree.backbone)
 import(ape)
 import(dplyr)
 import(ggtree)

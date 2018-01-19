@@ -1,0 +1,39 @@
+---
+title: "Using microbiomeViz"
+author: "Chenhao Li & Guangchuang Yu"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Install microbiomeViz from github
+```{r install, eval=FALSE}
+devtools::install("microbiomeViz")
+```
+
+# Example
+
+Parse MetaPhlAn table
+```{r}
+library(microbiomeViz)
+data("SRS014459_Stool_profile")
+tr <- parseMetaphlanTSV(SRS014459_Stool_profile)
+```
+
+Plot backbone
+```{r}
+p <- tree.backbone(tr)
+p
+```
+
+Add annotation
+```{r}
+anno.data <- data.frame(node=c("g__Roseburia", "c__Clostridia", "s__Bacteroides_ovatus"),
+                       color='red', stringsAsFactors = FALSE)
+p <- clade.anno(p, anno.data)
+p
+```
+
+

@@ -6,4 +6,5 @@ Chenhao Li, Guangchuang Yu
 
 ## Functions:
 
-- [x] parse taxonomic profiling table
+- parse taxonomic profiling table
+- annotate ggtree 
