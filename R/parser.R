@@ -13,6 +13,7 @@
 ##' @param tax.profile a single metaphlan table (either a file path or a a data.frame)
 ##' @param delimiter delimiter to separate taxonomic anotations
 ##' @param index the column number of taxonomic annotation
+##' @param header whether tax.profile provided as a file path contains a header
 ##' @param node.size.scale the parameter 'a' controlling node size: nodeSize=a*log(relative_abundance)+b
 ##' @param node.size.offset the parameter 'b' controlling node size: nodeSize=a*log(relative_abundance)+b
 ##' @return a treeio::treedata object
@@ -23,9 +24,9 @@
 ##' @author Chenhao Li, Guangchuang Yu
 ##' @export
 ##' @description parse a MetaPhlan table to a tree object
-parseMetaphlanTSV <- function(tax.profile, index=1, delimiter='\\|', node.size.scale=1, node.size.offset=1){
+parseMetaphlanTSV <- function(tax.profile, index=1, header=FALSE, delimiter='\\|', node.size.scale=1, node.size.offset=1){
     if (is.character(tax.profile)) {
-        taxtab <- read.table(tax.profile, sep='\t', stringsAsFactors=FALSE)
+        taxtab <- read.table(tax.profile, sep='\t', stringsAsFactors=FALSE, header=header)
     }else{
         taxtab <- tax.profile
     }
