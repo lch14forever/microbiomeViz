@@ -36,13 +36,14 @@ clade.anno <- function(gtree, anno.data){
 ##' @param layout tree layout
 ##' @param shape clade node shape
 ##' @param fill clade node fill
+##' @param color clade node fill
 ##' @return a ggtree object
 ##' @importFrom treeio treedata
 ##' @import ggtree
 ##' @author Chenhao Li, Guangchuang Yu
 ##' @export
 ##' @description basic tree (backbone) plotting utility
-tree.backbone <- function(tree, size=2, layout='circular', shape=21, fill='white'){
-    ggtree(tree, size=2, layout = 'circular')  +
-        geom_point(aes(size=I(nodeSize)), shape=21, fill='white')
+tree.backbone <- function(tree, size=2, layout='circular', shape=21, fill='white', color='black'){
+    ggtree(tree, size=size, layout = layout)  +
+        geom_point(aes(size=I(nodeSize)), shape=shape, fill=fill, color=color)
 }

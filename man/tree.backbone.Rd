@@ -5,7 +5,7 @@
 \title{tree.backbone}
 \usage{
 tree.backbone(tree, size = 2, layout = "circular", shape = 21,
-  fill = "white")
+  fill = "white", color = "black")
 }
 \arguments{
 \item{tree}{a treeio::treedata object}
@@ -17,6 +17,8 @@ tree.backbone(tree, size = 2, layout = "circular", shape = 21,
 \item{shape}{clade node shape}
 
 \item{fill}{clade node fill}
+
+\item{color}{clade node fill}
 }
 \value{
 a ggtree object
