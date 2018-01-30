@@ -13,7 +13,7 @@ Chenhao Li, Guangchuang Yu
 
 ### Install:
 ```{r}
-devtools::install("microbiomeViz")
+devtools::install_github("lch14forever/microbiomeViz")
 ```
 
 ### Parse a MetaPhlAn table
