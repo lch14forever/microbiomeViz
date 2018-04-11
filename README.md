@@ -11,7 +11,7 @@ Chenhao Li, Guangchuang Yu
 
 ## TODO list:
 
-- Add support for biom format
+- [ ] Add support for biom format
 
 ## Example:
 
