@@ -9,6 +9,10 @@ Chenhao Li, Guangchuang Yu
 - parse taxonomic profiling table
 - GraPhlAn like tree visualization and annotation
 
+## TODO list:
+
+- Add support for biom format
+
 ## Example:
 
 ### Install:
