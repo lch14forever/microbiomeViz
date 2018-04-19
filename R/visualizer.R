@@ -2,31 +2,69 @@
 ##'
 ##' @param gtree a ggtree object
 ##' @param anno.data a 2 column data.frame of annotation information. It has columns of clade name and color used for highlighting.
+##' @param alpha alpha parameter for shading
+##' @param anno.depth more specific clades will be shown on the side
+##' @param anno.x x position of annotations
+##' @param anno.y y position of annotations
 ##' @return a ggtree object
-##' @importFrom treeio treedata
 ##' @importFrom magrittr "%>%"
+##' @importFrom treeio treedata
 ##' @import ggtree
 ##' @import dplyr
 ##' @author Chenhao Li, Guangchuang Yu
 ##' @export
 ##' @description annotate a ggtree plot to highlight certain clades
-clade.anno <- function(gtree, anno.data){
+clade.anno <- function(gtree, anno.data, alpha=0.2, anno.depth=3, anno.x=10, anno.y=40){
+    short.labs <- letters
+    get_offset <- function(x) {(x*0.2+0.2)^2}
+    get_angle <- function(node){
+        data <- gtree$data
+        sp <- ggtree:::get.offspring.df(data, node)
+        sp2 <- c(sp, node)
+        sp.df <- data[match(sp2, data$node),]
+        mean(range(sp.df$angle))
+    }
     hilight.color <- anno.data$color
     node_list <- anno.data$node
     node_ids <- (gtree$data %>% filter(label %in% node_list ))$node
+    anno <- rep('white', nrow(gtree$data))
+    ## add hilight ... duplicated code
+    ## FIXME: duplicated code...
     for(i in 1:length(node_ids)){
         n <- node_ids[i]
         color <- hilight.color[i]
+        anno[n] <- color
         mapping <- gtree$data %>% filter(node == n)
-        lab <- mapping$label
-        angle <- mapping$angle
-        angle <- ifelse(angle>180, angle+90, angle-90)
+        nodeClass <- as.numeric(mapping$nodeClass)
+        offset <- get_offset(nodeClass)
         gtree <-
-            gtree + geom_hilight(node=n, fill=color, alpha=0.3, extend=1) +
-            geom_cladelabel(angle=angle, node=n, label=lab,
-                            offset=1, barsize=0, hjust=0.5)
+            gtree + geom_hilight(node=n, fill=color, alpha=alpha,
+                                 extend=offset)
     }
-    gtree
+    gtree$layers <- rev(gtree$layers)
+    gtree <- gtree + geom_point2(aes(size=I(nodeSize)), fill=anno, shape=21)
+    ## add labels
+    short.labs.anno <- 'Annotations:'
+    for(i in 1:length(node_ids)){
+        n <- node_ids[i]
+        mapping <- gtree$data %>% filter(node == n)
+        nodeClass <- as.numeric(mapping$nodeClass)
+        if(nodeClass <= anno.depth){## species and strains
+            lab <- short.labs[1]
+            short.labs <- short.labs[-1]
+            short.labs.anno <- paste0(short.labs.anno, sep='\n', paste0(lab, ': ', mapping$label))
+        }
+        else{
+            lab <- mapping$label
+        }
+        offset <- get_offset(nodeClass) - 0.4
+        angle <- get_angle(n) + 90
+        gtree <-
+            gtree + geom_cladelabel(node=n, label=lab, angle=angle, fontsize=1.5+sqrt(nodeClass),
+                                    offset=offset, barsize=0, hjust=0.5)
+    }
+    gtree + geom_text(data=data.frame(x=anno.x, y=anno.y, label=short.labs.anno),
+                      aes(x=x,y=y,label=label,hjust=0))
 }
 
 ##' @title tree.backbone
