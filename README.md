@@ -13,6 +13,10 @@ Chenhao Li, Guangchuang Yu
 
 - [ ] Add support for biom format
 
+## Showcase:
+
+![](http://lchblogs.netlify.com/post/2018-04-20-r-microbiomeviz_example_files/figure-html/unnamed-chunk-5-1.png)
+
 ## Example:
 
 ### Install:
