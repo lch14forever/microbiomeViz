@@ -33,7 +33,7 @@ parseMetaphlanTSV <- function(tax.profile, index=1, header=FALSE, delimiter='\\|
     names(taxtab)[index] <- 'tax'
     names(taxtab)[-index] <- 'rel_abun'
     taxtab$tax <- as.character(taxtab$tax)
-    taxtab <- taxtab %>% slice(-grep('unclassified', .[,index]))
+    taxtab <- taxtab %>% slice(grep('unclassified', .[,index], invert=TRUE))
     tax_chars <- c('k', 'p', 'c', 'o', 'f', 'g', 's', 't')
     tax_split <- strsplit(taxtab$tax, delimiter)    ## split into different taxonomy levels
     child <- vapply(tax_split, tail, n=1, '')
