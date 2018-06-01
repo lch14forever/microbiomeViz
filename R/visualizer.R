@@ -24,9 +24,10 @@ clade.anno <- function(gtree, anno.data, alpha=0.2, anno.depth=3, anno.x=10, ann
         sp.df <- data[match(sp2, data$node),]
         mean(range(sp.df$angle))
     }
+    anno.data = arrange(anno.data, node)
     hilight.color <- anno.data$color
     node_list <- anno.data$node
-    node_ids <- (gtree$data %>% filter(label %in% node_list ))$node
+    node_ids <- (gtree$data %>% filter(label %in% node_list ) %>% arrange(label))$node
     anno <- rep('white', nrow(gtree$data))
     ## add hilight ... duplicated code
     ## FIXME: duplicated code...
