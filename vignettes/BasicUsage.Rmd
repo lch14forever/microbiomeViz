@@ -10,7 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Install microbiomeViz from github
 ```{r install, eval=FALSE}
-devtools::install("microbiomeViz")
+devtools::install_github("lch14forever/microbiomeViz")
 ```
 
 # Example
