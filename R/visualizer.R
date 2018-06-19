@@ -10,11 +10,16 @@
 ##' @importFrom magrittr "%>%"
 ##' @importFrom treeio treedata
 ##' @import ggtree
+##' @import ggplot2
 ##' @import dplyr
-##' @author Chenhao Li, Guangchuang Yu
+##' @author Chenhao Li, Guangchuang Yu, Chenghao Zhu
 ##' @export
 ##' @description annotate a ggtree plot to highlight certain clades
 clade.anno <- function(gtree, anno.data, alpha=0.2, anno.depth=3, anno.x=10, anno.y=40){
+    if(nrow(anno.data) > 24) {
+        stop("Please make sure the anno.data table is shorter than 24.")
+    }
+
     short.labs <- letters
     get_offset <- function(x) {(x*0.2+0.2)^2}
     get_angle <- function(node){
@@ -45,7 +50,7 @@ clade.anno <- function(gtree, anno.data, alpha=0.2, anno.depth=3, anno.x=10, ann
     gtree$layers <- rev(gtree$layers)
     gtree <- gtree + geom_point2(aes(size=I(nodeSize)), fill=anno, shape=21)
     ## add labels
-    short.labs.anno <- 'Annotations:'
+    short.labs.anno <- NULL
     for(i in 1:length(node_ids)){
         n <- node_ids[i]
         mapping <- gtree$data %>% filter(node == n)
@@ -53,19 +58,34 @@ clade.anno <- function(gtree, anno.data, alpha=0.2, anno.depth=3, anno.x=10, ann
         if(nodeClass <= anno.depth){## species and strains
             lab <- short.labs[1]
             short.labs <- short.labs[-1]
-            short.labs.anno <- paste0(short.labs.anno, sep='\n', paste0(lab, ': ', mapping$label))
+            # short.labs.anno <- paste0(short.labs.anno, sep='\n', paste0(lab, ': ', mapping$label))
+            if(is.null(short.labs.anno)){
+                short.labs.anno = data.frame(lab=lab, annot = mapping$label, stringsAsFactors = F)
+            }else{
+                short.labs.anno = rbind(short.labs.anno,
+                                        c(lab, mapping$label))
+            }
         }
         else{
             lab <- mapping$label
         }
         offset <- get_offset(nodeClass) - 0.4
         angle <- get_angle(n) + 90
-        gtree <-
-            gtree + geom_cladelabel(node=n, label=lab, angle=angle, fontsize=1.5+sqrt(nodeClass),
-                                    offset=offset, barsize=0, hjust=0.5)
+        gtree <- gtree +
+            geom_cladelabel(node=n, label=lab, angle=angle,
+                            fontsize=1.5+sqrt(nodeClass),
+                            offset=offset, barsize=0, hjust=0.5)
     }
-    gtree + geom_text(data=data.frame(x=anno.x, y=anno.y, label=short.labs.anno),
-                      aes(x=x,y=y,label=label,hjust=0))
+
+    anno_shapes = sapply(short.labs.anno$lab, utf8ToInt)
+    gtree + geom_point(data = short.labs.anno,
+                       aes(x=0, y=0, shape = factor(annot)),
+                       size=0, stroke=0) +
+        guides(
+            shape = guide_legend(override.aes = list(size=3, shape=anno_shapes))
+        ) +
+        theme(legend.position = c(1.2,0.5),
+              legend.title = element_blank())
 }
 
 ##' @title tree.backbone

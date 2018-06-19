@@ -4,12 +4,21 @@
 \alias{clade.anno}
 \title{clade.anno}
 \usage{
-clade.anno(gtree, anno.data)
+clade.anno(gtree, anno.data, alpha = 0.2, anno.depth = 3, anno.x = 10,
+  anno.y = 40)
 }
 \arguments{
 \item{gtree}{a ggtree object}
 
 \item{anno.data}{a 2 column data.frame of annotation information. It has columns of clade name and color used for highlighting.}
+
+\item{alpha}{alpha parameter for shading}
+
+\item{anno.depth}{more specific clades will be shown on the side}
+
+\item{anno.x}{x position of annotations}
+
+\item{anno.y}{y position of annotations}
 }
 \value{
 a ggtree object
@@ -18,5 +27,5 @@ a ggtree object
 annotate a ggtree plot to highlight certain clades
 }
 \author{
-Chenhao Li, Guangchuang Yu
+Chenhao Li, Guangchuang Yu, Chenghao Zhu
 }

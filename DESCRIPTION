@@ -8,7 +8,8 @@ Description: More about what it does (maybe more than one line)
     Use four spaces when indenting paragraphs within the Description.
 Imports:
     ggtree (>= 1.11.4),
-    treeio (>= 1.3.11)
+    treeio (>= 1.3.11),
+    phyloseq (>= 1.24.0)
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true

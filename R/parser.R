@@ -67,3 +67,107 @@ parseMetaphlanTSV <- function(tax.profile, index=1, header=FALSE, delimiter='\\|
     d <- mapping %>% select_(~-isTip)
     treedata(phylo = phylo, data = as_data_frame(d))
 }
+
+################################################################################
+
+##' @title parsePhyloseq
+##'
+##' @param physeq a phyloseq object
+##' @param node.size.scale the parameter 'a' controlling node size: nodeSize=a*log(relative_abundance)+b
+##' @param node.size.offset the parameter 'b' controlling node size: nodeSize=a*log(relative_abundance)+b
+##' @return a treeio::treedata object
+##' @importFrom treeio treedata
+##' @importFrom magrittr "%>%"
+##' @import ape
+##' @import dplyr
+##' @import phyloseq
+##' @author Chenghao Zhu, Chenhao Li, Guangchuang Yu
+##' @export
+##' @description parse a phyloseq object to a tree object
+##'
+##' @examples
+##' data("GlobalPatterns")
+##' GP = GlobalPatterns
+##' otu_table = otu_table(GP)
+##' tax_table = tax_table(GP)
+##'
+##' # Use the OTUs that make up 99% of the total
+##' lib_size = colSums(otu_table)
+##' mat = sapply(1:ncol(otu_table), function(i)
+##'     otu_table[,i]/lib_size[i] >= 0.01)
+##' ind = rowSums(mat)>=1
+##'
+##' otu_table = otu_table[ind,]
+##' tax_table = tax_table[ind,]
+##'
+##' physeq = phyloseq(otu_table, tax_table) %>%
+##'     fix_duplicate_tax()
+##'
+##' tr = parsePhyloseq(physeq, use_abundance = F)
+##' p = tree.backbone(tr, size=1)
+
+parsePhyloseq <- function(physeq, use_abundance = TRUE, node.size.scale = 1, node.size.offset = 1){
+    taxtab <- tryCatch(
+        tax_table(physeq),
+        error = function(e){
+            stop("The tax_table is required to draw the cladogram")
+        }
+    )
+    otutab <- otu_table(physeq)
+
+    # Sometimes the upper level taxonomy is NA, for example:
+    # r__Root|k__Bacteria|p__Proteobacteria|c__Alphaproteobacteria|o__Rickettsiales|NA|g__CandidatusPelagibacter
+    # Remove all the labels after NA, because they not trustable.
+    for(i in 2:ncol(taxtab)){
+        for(j in 1:nrow(taxtab)){
+            if(!is.na(taxtab[j,i]) & is.na(taxtab[j,i-1])) taxtab[j,i] = NA
+        }
+    }
+
+    # add taxonomy level if not already have
+    if(!grepl("^k__", taxtab[1,1])){
+        for(i in 1:ncol(taxtab)){
+            tax_level = tolower(strsplit(colnames(taxtab)[i],'')[[1]][1])
+            taxtab[,i] = str_c(tax_level, "__", taxtab[,i])
+        }
+    }
+
+    # summarize taxa
+    if(use_abundance){
+        otutab_2 = otutab %>%
+            rowSums %>%
+            data.frame()
+        names(otutab_2) = "value"
+    }else{
+        otutab_2 = data.frame(
+            row.names = rownames(otutab),
+            value = rep(0, nrow(otutab))
+        )
+    }
+    physeq_2 = phyloseq(otu_table(otutab_2, taxa_are_rows = TRUE),
+                        taxtab)
+
+    treetable = data.frame(taxonomy = "r__Root", value = 0)
+    if(use_abundance){
+        treetable$value = 100
+    }
+
+    for(i in 1:ncol(taxtab)){
+        summarized = summarize_taxa(physeq_2, level=i)
+        summarized = filter(summarized, !grepl("NA$", summarized$taxonomy))
+        if(use_abundance){
+            summarized = mutate(summarized,
+                                value = value/sum(value) * 100)
+        }
+        treetable = rbind(treetable, summarized)
+    }
+    if(!use_abundance) treetable$value = treetable$value + 5
+
+    parseMetaphlanTSV(treetable,
+                      index = 1,
+                      header = FALSE,
+                      delimiter = "\\|",
+                      node.size.scale = node.size.scale,
+                      node.size.offset = node.size.offset)
+}
+
