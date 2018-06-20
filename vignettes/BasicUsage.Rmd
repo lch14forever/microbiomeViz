@@ -1,6 +1,6 @@
 ---
 title: "Using microbiomeViz"
-author: "Chenhao Li & Guangchuang Yu"
+author: "Chenhao Li, Guangchuang Yu, & Chenghao Zhu"
 output: html_document
 ---
 
@@ -34,6 +34,28 @@ anno.data <- data.frame(node=c("g__Roseburia", "c__Clostridia", "s__Bacteroides_
                        color='red', stringsAsFactors = FALSE)
 p <- clade.anno(p, anno.data)
 p
+```
+
+From phyloseq objects
+```{r}
+library(phyloseq)
+data("GlobalPatterns")
+GP = GlobalPatterns
+
+GP = transform_sample_counts(GlobalPatterns, function(otu) otu/sum(otu))
+GP = filter_taxa(GP, function(x) max(x)>=0.01,TRUE)
+GP = fix_duplicate_tax(GP)
+
+tr = parsePhyloseq(GP)
+p = tree.backbone(tr, size=1)
+```
+
+From .biom files
+```{r}
+rich_dense_biom  = system.file("extdata", "rich_dense_otu_table.biom",  package="phyloseq")
+rich_dense = import_biom(rich_dense_biom, parseFunction=parse_taxonomy_greengenes)
+tr = parsePhyloseq(rich_dense)
+p = tree.backbone(tr, size=1)
 ```
 
 

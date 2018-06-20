@@ -2,16 +2,13 @@
 
 ## Authors: 
 
-Chenhao Li, Guangchuang Yu
+Chenhao Li, Guangchuang Yu, Chenghao Zhu
 
-## Functions:
+## Description:
 
 - parse taxonomic profiling table
 - GraPhlAn like tree visualization and annotation
-
-## TODO list:
-
-- [ ] Add support for biom format
+- support cladograme visualization from phyloseq objects and .biom files
 
 ## Showcase:
 
@@ -48,3 +45,29 @@ p <- clade.anno(p, anno.data)
 p
 ```
 ![](http://lchblogs.netlify.com/post/2018-01-18-r-metagenomeViz_files/figure-html/unnamed-chunk-5-1.png)
+
+### From phyloseq objects
+
+```{r}
+library(phyloseq)
+data("GlobalPatterns")
+GP = GlobalPatterns
+
+GP = transform_sample_counts(GlobalPatterns, function(otu) otu/sum(otu))
+GP = filter_taxa(GP, function(x) max(x)>=0.01,TRUE)
+GP = fix_duplicate_tax(GP)
+
+tr = parsePhyloseq(GP)
+p = tree.backbone(tr, size=1)
+```
+
+### From .biom files
+
+The phyloseq package can import the otu table from .biom files.
+
+```{r}
+rich_dense_biom  = system.file("extdata", "rich_dense_otu_table.biom",  package="phyloseq")
+rich_dense = import_biom(rich_dense_biom, parseFunction=parse_taxonomy_greengenes)
+tr = parsePhyloseq(rich_dense)
+p = tree.backbone(tr, size=1)
+```
