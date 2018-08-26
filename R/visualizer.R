@@ -76,7 +76,8 @@ clade.anno <- function(gtree, anno.data, alpha=0.2, anno.depth=3, anno.x=10, ann
                             fontsize=1.5+sqrt(nodeClass),
                             offset=offset, barsize=0, hjust=0.5)
     }
-
+    if(is.null(short.labs.anno)){return(gtree)}
+    ## add short labels
     anno_shapes = sapply(short.labs.anno$lab, utf8ToInt)
     gtree + geom_point(data = short.labs.anno,
                        aes(x=0, y=0, shape = factor(annot)),

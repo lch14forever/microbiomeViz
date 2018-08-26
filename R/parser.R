@@ -128,7 +128,7 @@ parsePhyloseq <- function(physeq, use_abundance = TRUE, node.size.scale = 1, nod
     if(!grepl("^k__", taxtab[1,1])){
         for(i in 1:ncol(taxtab)){
             tax_level = tolower(strsplit(colnames(taxtab)[i],'')[[1]][1])
-            taxtab[,i] = str_c(tax_level, "__", taxtab[,i])
+            taxtab[,i] = paste0(tax_level, "__", taxtab[,i])
         }
     }
 
