@@ -18,18 +18,21 @@ formatPhrase <- function(sentence, taxon, ...){
 ##' @param physeq a phyloseq object
 ##' @param level the taxonomy level to summarize
 ##' @importFrom magrittr "%>%"
-##' @import ape
+##' @importFrom reshape2 melt dcast
 ##' @import dplyr
-##' @import reshape2
-##' @import phyloseq
+##' @export
 ##' @author Chenghao Zhu, Chenhao Li, Guangchuang Yu
 ##' @description Summarize a phyloseq object on different taxonomy level
 
 summarize_taxa = function(physeq, level, keep_full_tax = TRUE){
     # do some checking here
+    if (!requireNamespace("phyloseq", quietly = TRUE)) {
+        stop("Package \"phyloseq\" needed for this function to work. Please install it.",
+             call. = FALSE)
+    }
 
-    otutab = otu_table(physeq)
-    taxtab = tax_table(physeq)
+    otutab = phyloseq::otu_table(physeq)
+    taxtab = phyloseq::tax_table(physeq)
 
     if(keep_full_tax){
         taxonomy = apply(taxtab[,1:level], 1, function(x)
@@ -43,8 +46,8 @@ summarize_taxa = function(physeq, level, keep_full_tax = TRUE){
         mutate(taxonomy = taxonomy) %>%
         melt(id.var = "taxonomy",
              variable.name = "sample_id") %>%
-        ddply(.(taxonomy, sample_id), summarize,
-              value = sum(value)) %>%
+        group_by(taxonomy, sample_id) %>%
+        summarize(value=sum(value)) %>%
         dcast(taxonomy~sample_id)
 }
 
@@ -53,17 +56,16 @@ summarize_taxa = function(physeq, level, keep_full_tax = TRUE){
 ##' @title fix_duplicate_tax
 ##'
 ##' @param physeq a phyloseq object
-##' @importFrom magrittr "%>%"
-##' @import dplyr
-##' @import plyr
-##' @import reshape2
-##' @import phyloseq
 ##' @author Chenghao Zhu, Chenhao Li, Guangchuang Yu
 ##' @export
 ##' @description fix the duplicatae taxonomy names of a phyloseq object
 
 fix_duplicate_tax = function(physeq){
-    taxtab <- tax_table(physeq)
+    if (!requireNamespace("phyloseq", quietly = TRUE)) {
+        stop("Package \"phyloseq\" needed for this function to work. Please install it.",
+             call. = FALSE)
+    }
+    taxtab <- phyloseq::tax_table(physeq)
     for(i in 3:ncol(taxtab)){
         uniqs = unique(taxtab[,i])
         for(j in 1:length(uniqs)){
@@ -74,6 +76,6 @@ fix_duplicate_tax = function(physeq){
             }
         }
     }
-    tax_table(physeq) = taxtab
+    phyloseq::tax_table(physeq) = taxtab
     return(physeq)
 }

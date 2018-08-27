@@ -78,9 +78,7 @@ parseMetaphlanTSV <- function(tax.profile, index=1, header=FALSE, delimiter='\\|
 ##' @return a treeio::treedata object
 ##' @importFrom treeio treedata
 ##' @importFrom magrittr "%>%"
-##' @import ape
 ##' @import dplyr
-##' @import phyloseq
 ##' @author Chenghao Zhu, Chenhao Li, Guangchuang Yu
 ##' @export
 ##' @description parse a phyloseq object to a tree object
@@ -107,13 +105,17 @@ parseMetaphlanTSV <- function(tax.profile, index=1, header=FALSE, delimiter='\\|
 ##' p = tree.backbone(tr, size=1)
 
 parsePhyloseq <- function(physeq, use_abundance = TRUE, node.size.scale = 1, node.size.offset = 1){
+    if (!requireNamespace("phyloseq", quietly = TRUE)) {
+        stop("Package \"phyloseq\" needed for this function to work. Please install it.",
+             call. = FALSE)
+    }
     taxtab <- tryCatch(
-        tax_table(physeq),
+        phyloseq::tax_table(physeq),
         error = function(e){
             stop("The tax_table is required to draw the cladogram")
         }
     )
-    otutab <- otu_table(physeq)
+    otutab <- phyloseq::otu_table(physeq)
 
     # Sometimes the upper level taxonomy is NA, for example:
     # r__Root|k__Bacteria|p__Proteobacteria|c__Alphaproteobacteria|o__Rickettsiales|NA|g__CandidatusPelagibacter
@@ -144,7 +146,7 @@ parsePhyloseq <- function(physeq, use_abundance = TRUE, node.size.scale = 1, nod
             value = rep(0, nrow(otutab))
         )
     }
-    physeq_2 = phyloseq(otu_table(otutab_2, taxa_are_rows = TRUE),
+    physeq_2 = phyloseq::phyloseq(otu_table(otutab_2, taxa_are_rows = TRUE),
                         taxtab)
 
     treetable = data.frame(taxonomy = "r__Root", value = 0)
