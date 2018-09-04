@@ -42,7 +42,7 @@ library(phyloseq)
 data("GlobalPatterns")
 GP = GlobalPatterns
 
-GP = transform_sample_counts(GlobalPatterns, function(otu) otu/sum(otu))
+GP = transform_sample_counts(GP, function(otu) otu/sum(otu))
 GP = filter_taxa(GP, function(x) max(x)>=0.01,TRUE)
 GP = fix_duplicate_tax(GP)
 
