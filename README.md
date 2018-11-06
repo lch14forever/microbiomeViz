@@ -18,6 +18,8 @@ Chenhao Li, Guangchuang Yu, Chenghao Zhu
 
 ### Install:
 ```{r}
+## ## run the following command first if you don't have ggtree installed.
+## setRepositories(ind=1:2)
 devtools::install_github("lch14forever/microbiomeViz")
 ```
 
