@@ -12,7 +12,7 @@ Chenhao Li, Guangchuang Yu, Chenghao Zhu
 
 ## Showcase:
 
-![](http://lchblogs.netlify.com/post/2018-04-20-r-microbiomeviz_example_files/figure-html/unnamed-chunk-5-1.png)
+![](https://lichenhao.netlify.com/post/2018-04-20-r-microbiomeviz_example_files/figure-html/unnamed-chunk-5-1.png)
 
 ## Example:
 
