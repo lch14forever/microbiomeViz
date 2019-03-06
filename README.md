@@ -36,7 +36,7 @@ tr <- parseMetaphlanTSV(SRS014459_Stool_profile)
 p <- tree.backbone(tr)
 p
 ```
-![](http://lchblogs.netlify.com/post/2018-01-18-r-metagenomeViz_files/figure-html/unnamed-chunk-4-1.png)
+![](https://lichenhao.netlify.com/post/2018-04-20-r-microbiomeviz_example_files/figure-html/unnamed-chunk-5-1.png)
 
 ### Add annotation
 
