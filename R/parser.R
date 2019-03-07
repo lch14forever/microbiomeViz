@@ -33,7 +33,7 @@ parseMetaphlanTSV <- function(tax.profile, index=1, header=FALSE, delimiter='\\|
     names(taxtab)[index] <- 'tax'
     names(taxtab)[-index] <- 'rel_abun'
     taxtab$tax <- as.character(taxtab$tax)
-    taxtab <- taxtab %>% slice(grep('unclassified', .[,index], invert=TRUE))
+    taxtab <- taxtab %>% dplyr::slice(grep('unclassified', .[,index], invert=TRUE)) # remove unclassified taxa
     tax_chars <- c('k', 'p', 'c', 'o', 'f', 'g', 's', 't')
     tax_split <- strsplit(taxtab$tax, delimiter)    ## split into different taxonomy levels
     child <- vapply(tax_split, tail, n=1, '')
@@ -64,8 +64,8 @@ parseMetaphlanTSV <- function(tax.profile, index=1, header=FALSE, delimiter='\\|
                             ),
                        class = "phylo")
 
-    d <- mapping %>% select_(~-isTip)
-    treedata(phylo = phylo, data = as_data_frame(d))
+    d <- mapping %>% dplyr::select_(~-isTip)
+    treeio::treedata(phylo = phylo, data = as_data_frame(d))
 }
 
 ################################################################################
@@ -115,15 +115,23 @@ parsePhyloseq <- function(physeq, use_abundance = TRUE, node.size.scale = 1, nod
             stop("The tax_table is required to draw the cladogram")
         }
     )
-    otutab <- phyloseq::otu_table(physeq)
-
+    if (use_abundance) {
+      otutab <- phyloseq::otu_table(physeq)
+    } else {
+      row.names = rownames(phyloseq::tax_table(physeq))
+      otutab = matrix(rep(0, length(row.names)), ncol = 1)
+      rownames(otutab) <- row.names
+    }
     # Sometimes the upper level taxonomy is NA, for example:
     # r__Root|k__Bacteria|p__Proteobacteria|c__Alphaproteobacteria|o__Rickettsiales|NA|g__CandidatusPelagibacter
     # Remove all the labels after NA, because they not trustable.
     for(i in 2:ncol(taxtab)){
-        for(j in 1:nrow(taxtab)){
-            if(!is.na(taxtab[j,i]) & is.na(taxtab[j,i-1])) taxtab[j,i] = NA
-        }
+      na.idx.upper.taxa <- is.na(taxtab[,i])
+      na.idx.current.taxa <- is.na(taxtab[, i - 1])
+      idx.to.update <- (!na.idx.upper.taxa) & (na.idx.current.taxa)
+      if (any(idx.to.update)) {
+        taxtab[idx.to.update, i] = NA
+      }
     }
 
     # add taxonomy level if not already have
@@ -156,7 +164,7 @@ parsePhyloseq <- function(physeq, use_abundance = TRUE, node.size.scale = 1, nod
 
     for(i in 1:ncol(taxtab)){
         summarized = summarize_taxa(physeq_2, level=i)
-        summarized = filter(summarized, !grepl("NA$", summarized$taxonomy))
+        summarized = tidytree::filter(summarized, !grepl("NA$", summarized$taxonomy))
         if(use_abundance){
             summarized = mutate(summarized,
                                 value = value/sum(value) * 100)
