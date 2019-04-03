@@ -8,7 +8,10 @@ parsePhyloseq(physeq, use_abundance = TRUE, node.size.scale = 1,
   node.size.offset = 1)
 }
 \arguments{
-\item{physeq}{a phyloseq object}
+\item{physeq}{A phyloseq object. The tax_table slot must not be empty.}
+
+\item{use_abundance}{Boolean variable whether to set node sizes according to
+abundance. If FALSE, all nodes will have the same size.}
 
 \item{node.size.scale}{the parameter 'a' controlling node size: nodeSize=a*log(relative_abundance)+b}
 
@@ -18,7 +21,10 @@ parsePhyloseq(physeq, use_abundance = TRUE, node.size.scale = 1,
 a treeio::treedata object
 }
 \description{
-parse a phyloseq object to a tree object
+This function takes a \code{\link[phyloseq]{phyloseq-class}}
+and parse it to a \code{\link[treeio]{treedata}} object, that can be further
+visualized by the \code{\link{tree.backbone}} function. The tax_table slot
+must not be empty in the phyloseq object.
 }
 \examples{
 data("GlobalPatterns")
@@ -40,6 +46,10 @@ physeq = phyloseq(otu_table, tax_table) \%>\%
 
 tr = parsePhyloseq(physeq, use_abundance = F)
 p = tree.backbone(tr, size=1)
+}
+\seealso{
+\code{\link{tree.backbone}}, \code{\link{parseMetaphlanTSV}},
+\code{\link[phyloseq]{phyloseq-class}}
 }
 \author{
 Chenghao Zhu, Chenhao Li, Guangchuang Yu
