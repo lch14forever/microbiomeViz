@@ -16,20 +16,17 @@
 ##' @export
 ##' @description annotate a ggtree plot to highlight certain clades
 clade.anno <- function(gtree, anno.data, alpha=0.2, anno.depth=3, anno.x=10, anno.y=40){
-    if(nrow(anno.data) > 24) {
-        stop("Please make sure the anno.data table is shorter than 24.")
-    }
 
     short.labs <- letters
     get_offset <- function(x) {(x*0.2+0.2)^2}
     get_angle <- function(node){
         data <- gtree$data
-        sp <- ggtree:::get.offspring.df(data, node)
+        sp <- tidytree::offspring(data, node)$node
         sp2 <- c(sp, node)
         sp.df <- data[match(sp2, data$node),]
         mean(range(sp.df$angle))
     }
-    anno.data = arrange(anno.data, node)
+    anno.data <- arrange(anno.data, node)
     hilight.color <- anno.data$color
     node_list <- anno.data$node
     node_ids <- (gtree$data %>% filter(label %in% node_list ) %>% arrange(label))$node
