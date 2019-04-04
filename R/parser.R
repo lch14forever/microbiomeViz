@@ -72,7 +72,14 @@ parseMetaphlanTSV <- function(tax.profile, index=1, header=FALSE, delimiter='\\|
 
 ##' @title parsePhyloseq
 ##'
-##' @param physeq a phyloseq object
+##' @description This function takes a \code{\link[phyloseq]{phyloseq-class}}
+##' and parse it to a \code{\link[treeio]{treedata}} object, that can be further
+##' visualized by the \code{\link{tree.backbone}} function. The tax_table slot
+##' must not be empty in the phyloseq object.
+##'
+##' @param physeq A phyloseq object. The tax_table slot must not be empty.
+##' @param use_abundance Boolean variable whether to set node sizes according to
+##' abundance. If FALSE, all nodes will have the same size.
 ##' @param node.size.scale the parameter 'a' controlling node size: nodeSize=a*log(relative_abundance)+b
 ##' @param node.size.offset the parameter 'b' controlling node size: nodeSize=a*log(relative_abundance)+b
 ##' @return a treeio::treedata object
@@ -81,7 +88,9 @@ parseMetaphlanTSV <- function(tax.profile, index=1, header=FALSE, delimiter='\\|
 ##' @import dplyr
 ##' @author Chenghao Zhu, Chenhao Li, Guangchuang Yu
 ##' @export
-##' @description parse a phyloseq object to a tree object
+##'
+##' @seealso \code{\link{tree.backbone}}, \code{\link{parseMetaphlanTSV}},
+##' \code{\link[phyloseq]{phyloseq-class}}
 ##'
 ##' @examples
 ##' data("GlobalPatterns")
@@ -104,11 +113,22 @@ parseMetaphlanTSV <- function(tax.profile, index=1, header=FALSE, delimiter='\\|
 ##' tr = parsePhyloseq(physeq, use_abundance = F)
 ##' p = tree.backbone(tr, size=1)
 
-parsePhyloseq <- function(physeq, use_abundance = TRUE, node.size.scale = 1, node.size.offset = 1){
+parsePhyloseq <- function(physeq,
+                          use_abundance = TRUE,
+                          node.size.scale = 1,
+                          node.size.offset = 1){
     if (!requireNamespace("phyloseq", quietly = TRUE)) {
-        stop("Package \"phyloseq\" needed for this function to work. Please install it.",
+        stop("Package \"phyloseq\" is needed for this function. Please install it.",
              call. = FALSE)
     }
+
+    # convert taxa_are_rows to TRUE if not
+    if(!phyloseq::taxa_are_rows(physeq)){
+        otu = phyloseq::otu_table(physeq)
+        otu = phyloseq::otu_table(t(otu@.Data), taxa_are_rows = TRUE)
+        phyloseq::otu_table(physeq) = otu
+    }
+
     taxtab <- tryCatch(
         phyloseq::tax_table(physeq),
         error = function(e){
@@ -154,8 +174,10 @@ parsePhyloseq <- function(physeq, use_abundance = TRUE, node.size.scale = 1, nod
             value = rep(0, nrow(otutab))
         )
     }
-    physeq_2 = phyloseq::phyloseq(otu_table(otutab_2, taxa_are_rows = TRUE),
-                        taxtab)
+    physeq_2 = phyloseq::phyloseq(
+        otu_table(otutab_2, taxa_are_rows = TRUE),
+        taxtab
+    )
 
     treetable = data.frame(taxonomy = "r__Root", value = 0)
     if(use_abundance){
@@ -166,8 +188,10 @@ parsePhyloseq <- function(physeq, use_abundance = TRUE, node.size.scale = 1, nod
         summarized = summarize_taxa(physeq_2, level=i)
         summarized = tidytree::filter(summarized, !grepl("NA$", summarized$taxonomy))
         if(use_abundance){
-            summarized = mutate(summarized,
-                                value = value/sum(value) * 100)
+            summarized = mutate(
+                summarized,
+                value = value/sum(value) * 100
+            )
         }
         treetable = rbind(treetable, summarized)
     }
