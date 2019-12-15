@@ -4,8 +4,14 @@
 \alias{tree.backbone}
 \title{tree.backbone}
 \usage{
-tree.backbone(tree, size = 2, layout = "circular", shape = 21,
-  fill = "white", color = "black")
+tree.backbone(
+  tree,
+  size = 2,
+  layout = "circular",
+  shape = 21,
+  fill = "white",
+  color = "black"
+)
 }
 \arguments{
 \item{tree}{a treeio::treedata object}

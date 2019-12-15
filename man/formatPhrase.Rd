@@ -4,12 +4,10 @@
 \alias{formatPhrase}
 \title{formatPhrase}
 \usage{
-formatPhrase(sentence, taxon, ...)
+formatPhrase(sentence, taxon)
 }
 \arguments{
 \item{taxon}{a taxon name to be italisized}
-
-\item{...}{parameters passed to strsplit}
 
 \item{phrase}{a phrase with taxon name(s)}
 }

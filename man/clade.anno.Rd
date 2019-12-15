@@ -4,8 +4,14 @@
 \alias{clade.anno}
 \title{clade.anno}
 \usage{
-clade.anno(gtree, anno.data, alpha = 0.2, anno.depth = 3,
-  anno.x = 10, anno.y = 40)
+clade.anno(
+  gtree,
+  anno.data,
+  alpha = 0.2,
+  anno.depth = 3,
+  anno.x = 10,
+  anno.y = 40
+)
 }
 \arguments{
 \item{gtree}{a ggtree object}

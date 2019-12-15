@@ -4,8 +4,12 @@
 \alias{parsePhyloseq}
 \title{parsePhyloseq}
 \usage{
-parsePhyloseq(physeq, use_abundance = TRUE, node.size.scale = 1,
-  node.size.offset = 1)
+parsePhyloseq(
+  physeq,
+  use_abundance = TRUE,
+  node.size.scale = 1,
+  node.size.offset = 1
+)
 }
 \arguments{
 \item{physeq}{A phyloseq object. The tax_table slot must not be empty.}

@@ -1,13 +1,3 @@
-# You can learn more about package authoring with RStudio at:
-#
-#   http://r-pkgs.had.co.nz/
-#
-# Some useful keyboard shortcuts for package authoring:
-#
-#   Build and Reload Package:  'Cmd + Shift + B'
-#   Check Package:             'Cmd + Shift + E'
-#   Test Package:              'Cmd + Shift + T'
-
 ##' @title parseMetaphlanTSV
 ##'
 ##' @param tax.profile a single metaphlan table (either a file path or a a data.frame)

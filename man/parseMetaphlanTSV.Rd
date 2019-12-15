@@ -4,8 +4,14 @@
 \alias{parseMetaphlanTSV}
 \title{parseMetaphlanTSV}
 \usage{
-parseMetaphlanTSV(tax.profile, index = 1, header = FALSE,
-  delimiter = "\\\\|", node.size.scale = 1, node.size.offset = 1)
+parseMetaphlanTSV(
+  tax.profile,
+  index = 1,
+  header = FALSE,
+  delimiter = "\\\\|",
+  node.size.scale = 1,
+  node.size.offset = 1
+)
 }
 \arguments{
 \item{tax.profile}{a single metaphlan table (either a file path or a a data.frame)}
