@@ -2,13 +2,18 @@
 ##'
 ##' @param phrase a phrase with taxon name(s)
 ##' @param taxon a taxon name to be italisized
-##' @param ... parameters passed to strsplit
 ##' @export
 ##' @author Chenhao Li, Guangchuang Yu
 ##' @description generate an expression for the phrase with the given taxon italisized
-formatPhrase <- function(sentence, taxon, ...){
-    sentence.chunks <- strsplit(x=sentence, split=taxon, ...)[[1]]
-    return(bquote(.(sentence.chunks[1])~italic(.(taxon) )~.(sentence.chunks[2])))
+formatPhrase <- function(sentence, taxon){
+    ## already an expression
+    if(!is.character(sentence)) return(sentence)
+    ## no pattern matched
+    if(length(grep(x=sentence, taxon, fixed = TRUE))==0) return(sentence)
+    p <- taxon
+    s <- paste0("'~italic('", taxon, "')~'")
+    str <- gsub(x=paste0("'",sentence,"'"), p, s, fixed = TRUE)
+    return(parse(text=bquote(.(str))))
 }
 
 ################################################################################
