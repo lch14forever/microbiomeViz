@@ -152,7 +152,7 @@ lefse.lda.plot <- function(lefse.result, negate.class=NULL, lda.threshold=NULL, 
         coord_flip() +
         labs(x=NULL) +
         theme_classic() +
-        facet_grid(group~., scale='free_y',  space = "free_y",
+        facet_grid(group~., scale='free_y', space = "free_y",
                    labeller=labeller(group=anno)) +
         theme(legend.title = element_blank(), legend.key.size = unit(1, 'cm'), legend.position = 'left',
               axis.text.y = element_blank(),
